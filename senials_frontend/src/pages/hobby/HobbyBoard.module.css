@@ -1,0 +1,174 @@
+.page {
+    width: 1280px;
+    margin: 0 auto;  
+    min-height: 80vh;
+}
+
+.title {
+    font-size: 33px;
+    text-align: left;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.seeAllButton{
+    margin-left: auto;
+    font-weight: bold;
+}
+
+.top3List {
+    display: flex;
+    justify-content: center;
+    gap: 125px;
+    margin-bottom: 30px;
+}
+
+.top3Img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.top3Name {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.searchBox {
+    display: flex;
+    border: 1px solid #c2c2c2;
+    width: 270px;
+    max-width: 600px;
+    margin: 20px 0;
+    margin-left: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+    position: relative;
+}
+
+.searchBox > input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    background-color: transparent;
+}
+
+.searchButton {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.hobbyList {
+    max-width: 1000px;
+    margin-left: 80px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.hobbyImg {
+    width: 250px;
+    height: 250px;
+    object-fit: cover; 
+    margin-right: 20px; 
+    border-radius: 10px;
+}
+
+.hobbyName {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 70px;
+}
+
+.hobbyDetail {
+    margin-top: 15px;
+    font-size: 1.1em;
+}
+
+.suggestHobbyButton {
+    padding: 5px 7px;
+    font-size: 1.2em;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    color: white;
+    background-color: #6CB7DA;
+    border-color: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.progressBarContainer {
+    max-width: 250px;
+    width: 100%; 
+    height: 10px; 
+    background-color: #e0e0e0; 
+    border-radius: 15px; 
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.progressBar {
+    height: 100%; 
+    background-color: #FF5391; 
+    border-radius: 15px; 
+    transition: width 0.5s ease;
+}
+
+/* category */
+
+.separator {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 16px;
+}
+
+.firstFont {
+    font-size: 33px;
+    font-weight: bold;
+}
+
+.marginBottom {
+    margin-bottom: 16px;
+}
+
+.ctgrContainer {
+    margin: 0 auto;
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    margin:10px;
+}
+
+.ctgrText {
+    color: white;
+    padding: 0 0 5px 5px;
+}
+
+.secondFont{
+    font-size: 23px;
+}
+
+.thirdFont {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.sort{
+    display:flex;
+    justify-content: center; 
+}
+
