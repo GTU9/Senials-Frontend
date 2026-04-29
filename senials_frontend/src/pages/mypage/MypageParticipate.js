@@ -5,8 +5,8 @@ import { FaAngleLeft } from "react-icons/fa";
 import main from "../common/MainVer1.module.css";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
 import createApiInstance from '../common/tokenApi';
+import { getStoredToken, getStoredUserNumber } from '../../utils/authToken';
     
 const api = createApiInstance();
 
@@ -19,14 +19,17 @@ function MypageParticipate({userNumber}) {
     const navigate = useNavigate();
     // 만든 모임 데이터 가져오기
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
             return;
         }
-        const decodedToken = jwtDecode(token); // JWT 디코드
-        const userNumber = decodedToken.userNumber;
+        const userNumber = getStoredUserNumber();
+        if (!userNumber) {
+            navigate('/login');
+            return;
+        }
 
         const fetchParticipateParties = async () => {
 

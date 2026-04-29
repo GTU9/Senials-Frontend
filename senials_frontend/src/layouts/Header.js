@@ -3,6 +3,7 @@ import styles from './Header.module.css'
 import {FaAngleLeft, FaBell, FaSearch} from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from "jwt-decode";
+import { getStoredToken } from "../utils/authToken";
 
 const Header = () => {
 
@@ -25,17 +26,23 @@ const Header = () => {
 
     // 마이페이지 이동 이벤트
     const linkMyPage = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
             return;
         }
 
-        const decodedToken = jwtDecode(token); // JWT 디코드
-        const userNumber = decodedToken.userNumber; // userNumber 추출
+        try {
+            const decodedToken = jwtDecode(token); // JWT 디코드
+            const userNumber = decodedToken.userNumber; // userNumber 추출
 
-        navigate(`/user/${userNumber}/meet`); // 마이페이지로 이동
+            navigate(`/user/${userNumber}/meet`); // 마이페이지로 이동
+        } catch (error) {
+            localStorage.removeItem("token");
+            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            navigate('/login');
+        }
     };
 
     //모임 목록 페이지 이동 이벤트
@@ -57,7 +64,7 @@ const Header = () => {
     };
 
     // 토큰 존재 여부 확인
-    const token = localStorage.getItem("token");
+    const token = getStoredToken();
     const isLoggedIn = !!token; // 토큰이 존재하면 true, 아니면 false
 
     //키워드 입력 후 페이지 이동

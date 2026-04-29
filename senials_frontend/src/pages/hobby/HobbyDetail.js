@@ -9,6 +9,7 @@ import axios from 'axios';
 import { setHobbyDetail,setHobbyReview} from '../../redux/hobbySlice';
 import { useParams } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
+import { getStoredToken } from '../../utils/authToken';
 
 
    //성향 출력
@@ -72,10 +73,15 @@ function HobbyDetailPost() {
 
     useEffect(() => {
 
-        const token = localStorage.getItem('token')
-        if(token != null) {
-            const decodedUserNumber = jwtDecode(token).userNumber;
-            setUserNumber(decodedUserNumber);
+        const token = getStoredToken();
+        if (token) {
+            try {
+                const decodedUserNumber = jwtDecode(token).userNumber;
+                setUserNumber(decodedUserNumber);
+            } catch (error) {
+                localStorage.removeItem("token");
+                setUserNumber(null);
+            }
         }
 
         if (hobbyNumber) {
@@ -121,7 +127,7 @@ function HobbyDetailPost() {
 
     //후기작성페이지 이동 이벤트
     const linkHobbyReview = () => {
-        const token = localStorage.getItem('token');
+        const token = getStoredToken();
         if (!token) {
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
         } else {

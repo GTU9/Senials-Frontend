@@ -3,6 +3,7 @@ import styles1 from './Report.module.css';
 import styles2 from '../common/Common.module.css'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getStoredToken } from '../../utils/authToken';
 
 function Suggestion(){
 
@@ -28,12 +29,17 @@ function Suggestion(){
             suggestionDetail:detail,
         }
         try {
-            const token = localStorage.getItem("token");
+            const token = getStoredToken();
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                navigate('/login');
+                return;
+            }
             console.log(suggestionData);
 
             await axios.post(`/suggestion`, suggestionData, {
                 headers: {
-                    'Authorization': token // JWT 토큰을 Authorization 헤더에 추가
+                    'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
                 }
             });
             alert('건의 요청이 완료되었습니다.');

@@ -5,6 +5,7 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import { setHobbyDetail,setHobbyTop3Card } from '../../redux/hobbySlice';
 import { useSelector,useDispatch } from 'react-redux';
 import {jwtDecode} from "jwt-decode";
+import { getStoredToken } from '../../utils/authToken';
 
 function SuggestHobbyPost() {
 
@@ -30,15 +31,20 @@ function SuggestHobbyPost() {
 
     // 마이페이지 이동 이벤트
     const linkMyPage=()=>{
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); 
             return;
-        }else{
+        } else {
+            try {
             const decodedToken = jwtDecode(token);
             const userNumber = decodedToken.userNumber;
             navigate(`/user/${userNumber}/favorites`); 
+            } catch (error) {
+                localStorage.removeItem("token");
+                navigate('/login');
+            }
         }
         
     }

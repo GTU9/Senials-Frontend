@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from './MypageLike.module.css';
 import common from '../common/Common.module.css';
-import {jwtDecode} from "jwt-decode";
+import { getStoredToken, getStoredUserNumber } from "../../utils/authToken";
 
 function MypageLike() {
     // const [userNumber] = useState(10);
@@ -12,17 +12,23 @@ function MypageLike() {
     const [favoritesData, setFavoritesData] = useState([]);
     const [groupedData, setGroupedData] = useState({});
 
-    const token = localStorage.getItem("token");
-    const decodedToken = jwtDecode(token); // JWT 디코드
-    const userNumber = decodedToken.userNumber; // userNumber 추출
+    const token = getStoredToken();
+    const userNumber = getStoredUserNumber();
 
     /* 관심사 가져오기 */
     useEffect(() => {
         const fetchFavoriteData = async () => {
 
-            const token = localStorage.getItem("token");
-            const decodedToken = jwtDecode(token); // JWT 디코드
-            const userNumber = decodedToken.userNumber; // userNumber 추출
+            const token = getStoredToken();
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+            const userNumber = getStoredUserNumber();
+            if (!userNumber) {
+                navigate('/login');
+                return;
+            }
 
             try {
                 const response = await axios.get(`/users/${userNumber}/favoritesAll`, {
@@ -50,9 +56,16 @@ function MypageLike() {
 
     /* 관심사 저장 */
     const handleSave = async () => {
-        const token = localStorage.getItem("token");
-        const decodedToken = jwtDecode(token); // JWT 디코드
-        const userNumber = decodedToken.userNumber; // userNumber 추출
+        const token = getStoredToken();
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        const userNumber = getStoredUserNumber();
+        if (!userNumber) {
+            navigate('/login');
+            return;
+        }
         try {
             const updatedFavorites = Object.values(groupedData)
                 .flat()

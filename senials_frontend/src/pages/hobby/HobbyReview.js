@@ -3,6 +3,7 @@ import styles from "./HobbyReview.module.css";
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
+import { getStoredToken } from '../../utils/authToken';
 
 function HobbyReviewGet() {
     const navigate = useNavigate();
@@ -66,10 +67,15 @@ function HobbyReviewGet() {
         };
 
         try {
-            const token = localStorage.getItem("token");
+            const token = getStoredToken();
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                navigate('/login');
+                return;
+            }
             await axios.post(`/${hobbyNumber}/hobby-review`, reviewData, {
                 headers: {
-                    'Authorization': token // JWT 토큰을 Authorization 헤더에 추가
+                    'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
                 }
             });
             alert('후기 작성이 완료되었습니다.');

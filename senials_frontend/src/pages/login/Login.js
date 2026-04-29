@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { normalizeToken, isJwtFormat } from "../../utils/authToken";
 // CSS
 import styles from './Login.module.css';
 
@@ -38,10 +39,17 @@ function Login() {
                 userPwd
             });
 
-            // 로그인 성공 시 처리
+            // 로그인 성공 시 Authorization 헤더 우선 사용
             console.log('로그인 성공:', response.data);
-            const token = response.data.token; // 서버에서 받은 JWT
-            localStorage.setItem("token", token); // JWT를 로컬 스토리지에 저장
+            const headerToken = normalizeToken(response.headers?.authorization);
+            const bodyToken = normalizeToken(response.data?.token);
+            const token = headerToken || bodyToken;
+
+            if (!isJwtFormat(token)) {
+                throw new Error("유효한 JWT를 받지 못했습니다.");
+            }
+
+            localStorage.setItem("token", token);
 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
@@ -66,11 +74,11 @@ function Login() {
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const token = urlParams.get('token'); // URL에서 token 추출
+        const token = normalizeToken(urlParams.get('token')); // URL에서 token 추출
 
-        if (token) {
+        if (isJwtFormat(token)) {
             // JWT가 URL 파라미터에 있을 경우
-            localStorage.setItem("token", token); // JWT를 로컬 스토리지에 저장
+            localStorage.setItem("token", token);
             console.log('JWT 저장 완료:', token);
             navigate('/success'); // 성공 페이지로 리다이렉트
         }

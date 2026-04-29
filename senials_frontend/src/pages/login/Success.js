@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { getStoredToken } from '../../utils/authToken';
 
 function Success() {
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
 
         if (!token) {
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
@@ -33,11 +34,16 @@ function Success() {
     const sendUserNumber = async () => {
         if (userInfo && userInfo.userNumber) {
             try {
+                const token = getStoredToken();
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
                 const response = await axios.post('/sendUserNumber', { //보내고 싶은 get 주소
                     userNumber: userInfo.userNumber,
                 }, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}` // 인증 토큰 추가
+                        Authorization: `Bearer ${token}` // 인증 토큰 추가
                     }
                 });
 

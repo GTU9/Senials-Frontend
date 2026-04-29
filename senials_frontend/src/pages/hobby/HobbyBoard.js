@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { setHobbyCard,setHobbyTop3Card } from '../../redux/hobbySlice';
+import { getStoredToken } from '../../utils/authToken';
 
 function HobbyBoardPost() {
 
@@ -67,7 +68,7 @@ function HobbyBoardPost() {
 
     //건의 사항 추가 페이지 이동
     const linkSuggestion=()=>{
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
         } else {

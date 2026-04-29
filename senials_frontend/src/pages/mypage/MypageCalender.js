@@ -6,6 +6,7 @@ import axios from "axios";
 import Calendar from "react-calendar"; // 캘린더 컴포넌트
 import "react-calendar/dist/Calendar.css"; // 기본 스타일
 import {jwtDecode} from "jwt-decode";
+import { getStoredToken } from "../../utils/authToken";
 
 function MypageCalender() {
 
@@ -27,6 +28,18 @@ function MypageCalender() {
     const [madePartyCount, setMadePartyCount] = useState(0); // 만든 모임 개수
 
     const navigate = useNavigate();
+    const getUserNumberFromToken = () => {
+        const token = getStoredToken();
+        if (!token) {
+            return null;
+        }
+        try {
+            return jwtDecode(token).userNumber;
+        } catch (error) {
+            localStorage.removeItem("token");
+            return null;
+        }
+    };
 
     const [imgSrc, setImgSrc] = useState('/img/defaultProfile.png');
    /* const [userNumber, setUserNumber] = useState(0);
@@ -52,14 +65,17 @@ function MypageCalender() {
     // 사용자 정보 가져오기
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem("token");
+            const token = getStoredToken();
             if (!token) {
                 alert("로그인이 필요합니다!")
                 navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
                 return;
             }
-            const decodedToken = jwtDecode(token); // JWT 디코드
-            const userNumber = decodedToken.userNumber; // userNumber 추출
+            const userNumber = getUserNumberFromToken();
+            if (!userNumber) {
+                navigate('/login');
+                return;
+            }
             console.log("fetchuserdata 유저 확인", userNumber)
 
 
@@ -108,7 +124,7 @@ function MypageCalender() {
                 // 좋아한 모임 개수 가져오기
                 const likedCountResponse = await axios.get(`/users/${userNumber}/like/count`, {
                     headers: {
-                        'Authorization': `${token}` // Authorization 헤더 추가
+                        'Authorization': `Bearer ${token}` // Authorization 헤더 추가
                     }
                 });
                 setLikedPartyCount(likedCountResponse.data.results.likesPartyCount);
@@ -155,14 +171,17 @@ function MypageCalender() {
     // 사용자 모임 일정 가져오기
     useEffect(() => {
         const fetchEvents = async () => {
-            const token = localStorage.getItem("token");
+            const token = getStoredToken();
             if (!token) {
                 alert("로그인이 필요합니다!")
                 navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
                 return;
             }
-            const decodedToken = jwtDecode(token); // JWT 디코드
-            const userNumber = decodedToken.userNumber; // userNumber 추출
+            const userNumber = getUserNumberFromToken();
+            if (!userNumber) {
+                navigate('/login');
+                return;
+            }
             console.log("fetchEvents 유저 확인", userNumber);
             if (!userNumber) {
                 console.log("사용자가 없다네 fetchevent")
@@ -266,14 +285,17 @@ function MypageCalender() {
     const handleDeleteUser = async () => {
         // 브라우저 기본 확인 창
 
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
             return;
         }
-        const decodedToken = jwtDecode(token); // JWT 디코드
-        const userNumber = decodedToken.userNumber; // userNumber 추출
+        const userNumber = getUserNumberFromToken();
+        if (!userNumber) {
+            navigate('/login');
+            return;
+        }
         console.log("handledeleteuser 유저 확인", userNumber);
 
         const isConfirmed = window.confirm("정말로 탈퇴하시겠습니까? 모든 데이터가 삭제됩니다.");
@@ -303,7 +325,7 @@ function MypageCalender() {
 
     // 프로필 사진
 /*     const fetchUserProfileImage = async () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
@@ -337,7 +359,7 @@ function MypageCalender() {
     }, []); */
 
     const handleFavoritesClick = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
@@ -355,7 +377,7 @@ function MypageCalender() {
     };
 
     const handleLikesClick = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
@@ -373,7 +395,7 @@ function MypageCalender() {
     };
 
     const handlePartiesClick = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
@@ -391,7 +413,7 @@ function MypageCalender() {
     };
 
     const handleMadeClick = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
@@ -409,7 +431,7 @@ function MypageCalender() {
     };
 
     const handleModifyClick = () => {
-        const token = localStorage.getItem("token");
+        const token = getStoredToken();
         if (!token) {
             alert("로그인이 필요합니다!");
             navigate('/login');
