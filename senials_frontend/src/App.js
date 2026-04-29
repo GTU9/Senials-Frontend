@@ -40,8 +40,6 @@ import PartyReviewModify from "./pages/party/PartyReviewModify";
 import Login from "./pages/login/Login";
 import Join from "./pages/login/Join";
 import Success from "./pages/login/Success";
-import KakaoCallBack from "./pages/login/KakaoCallBack";
-
 import Suggestion from './pages/admin/Suggestion.js';
 import Report from './pages/admin/ReportComponent.js';
 import ManageUser from "./pages/admin/ManageUser";
@@ -61,7 +59,6 @@ function App() {
 
                     {/* 로그인 페이지 */}
                     <Route path="login" element={<Login />} />
-                    <Route path="/login/oauth2/code/kakao" element={<KakaoCallBack />} />
 
                     {/* 회원가입 페이지 */}
                     <Route path="join" element={<Join />} />

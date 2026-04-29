@@ -419,6 +419,7 @@ function Carousel() {
 
     const { partyNumber } = useParams();
     const images = useSelector(state => state.partyBoardDetail.images)
+    const displayImages = images.length > 0 ? images : [{ partyBoardImg: 'NoImage.svg', isFallback: true }];
     
     // 이미지 총 개수 - 1
     const lastIndex = images.length - 1;
@@ -454,9 +455,13 @@ function Carousel() {
                 <div className={`${styles.csContainer}`} style={{margin: '0 auto 0 auto', width: '1000px', height: '500px'}}>
                     <div className={`${styles.csInner}`} style={{transform: `translateX(-${current * 1000}px)`}}>
                         {
-                            images.map((image, idx) => 
-                                <div key={idx} className={`${styles.csItem}`} style={{backgroundImage: `url(/img/partyboard/${partyNumber}/thumbnail/${image.partyBoardImg})`}} />
-                            )
+                            displayImages.map((image, idx) => {
+                                const backgroundImage = image.isFallback
+                                    ? 'url(/img/NoImage.svg)'
+                                    : `url(/img/partyboard/${partyNumber}/thumbnail/${image.partyBoardImg})`;
+
+                                return <div key={idx} className={`${styles.csItem}`} style={{backgroundImage}} />
+                            })
                         }
                     </div>
                 </div>

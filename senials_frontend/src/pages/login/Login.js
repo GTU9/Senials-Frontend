@@ -45,20 +45,6 @@ function Login() {
         navigate('/join');
     };
 
-    const handleKakaoLogin = async () => {
-        try {
-            const response = await axios.get('/api/init-kakao-login'); // 백엔드에서 카카오 로그인 초기화 (proxy 사용)
-            const { authUrl } = response.data; // 백엔드에서 전달받은 카카오 인증 URL
-
-            alert("카카오 인증 URL: " + authUrl);
-
-            // 카카오 인증 URL로 리다이렉트
-            window.location.href = authUrl;
-        } catch (error) {
-            console.error('카카오 로그인 초기화 오류:', error);
-        }
-    };
-
     const handleLogin = async () => {
         setErrorMessage('');
         setIsLoading(true); // 로딩 시작
@@ -137,7 +123,7 @@ function Login() {
     return (
          <div className={styles.bigDiv}>
                     <div className={styles.smallDiv}>
-        <div className={styles.kakaocontainer}>
+        <div className={styles.loginCard}>
             <h1 className={styles.SimpleLogin}>로그인</h1>
             <div className={styles.OrginputContainer}>
                 <input
@@ -166,11 +152,8 @@ function Login() {
                 ) : null}
             </div>
             <div className={styles.buttonContainer}>
-                <button type="button" className={styles.simpleSignupButton} onClick={handleKakaoLogin}>
-                    카카오 로그인
-                </button>
-                <button className={styles.simpleSignupButton} onClick={linkSignup}>
-                    일반 회원가입
+                <button type="button" className={styles.simpleSignupButton} onClick={linkSignup}>
+                    회원가입
                 </button>
             </div>
         </div>
