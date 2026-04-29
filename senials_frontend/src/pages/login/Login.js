@@ -90,7 +90,18 @@ function Login() {
             if (error.response) {
                 alert("없는 사용자이거나 아이디나 비밀번호가 틀렸습니다.")
                 console.error('서버 응답 실패:', error.response.data);
-                setErrorMessage(error.response.data.message || '로그인 실패');
+
+                const serverMessage = String(error.response?.data?.message || '').toLowerCase();
+                const isUnauthorized =
+                    error.response.status === 401 ||
+                    serverMessage === 'unauthorized' ||
+                    serverMessage.includes('unauthorized');
+
+                setErrorMessage(
+                    isUnauthorized
+                        ? '아이디 또는 비밀번호가 올바르지 않습니다.'
+                        : (error.response.data.message || '로그인 실패')
+                );
             } else if (error.request) {
                 console.error('요청이 이루어졌지만 응답이 없음:', error.request);
             } else {
