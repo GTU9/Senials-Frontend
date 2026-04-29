@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { normalizeToken, isJwtFormat } from '../../utils/authToken';
 
 const KakaoCallBack = () => {
     const navigate = useNavigate();
@@ -27,11 +26,7 @@ const KakaoCallBack = () => {
 
                 // 데이터 접근 시 조건부 접근 사용
                 const kakaoName = response.data.account ? response.data.account.kakaoName : '이름 없음';
-                const token = normalizeToken(response.data?.token); // 서버에서 받은 JWT
-
-                if (!isJwtFormat(token)) {
-                    throw new Error("유효하지 않은 토큰 응답");
-                }
+                const token = response.data.token; // 서버에서 받은 JWT
 
                 localStorage.setItem('token', token); // JWT를 로컬 스토리지에 저장
                 localStorage.setItem("name", kakaoName); // 카카오 이름 저장

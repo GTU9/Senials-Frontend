@@ -5,7 +5,6 @@ import AdminNav from './AdminNav.js';
 import createApiInstance from '../common/tokenApi.js';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { getStoredToken } from '../../utils/authToken';
 
 
 let userData={id:'sangik', name:'김상익',birth:'1999-09-09', email:'sangik9999@naver.com',gender:'male',reportCount:12}
@@ -33,15 +32,11 @@ function ManageUser(){
     useEffect(() => {
 
         let api;
-        const token = getStoredToken();
+        const token = localStorage.getItem('token');
         if(token == null) {
             wrongReqeust(navigate);
         } else {
-            try {
-                if(jwtDecode(token).userNumber != 1) {
-                    wrongReqeust(navigate);
-                }
-            } catch (error) {
+            if(jwtDecode(token).userNumber != 1) {
                 wrongReqeust(navigate);
             }
         }

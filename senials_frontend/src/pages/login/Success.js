@@ -2,26 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import { getStoredToken } from '../../utils/authToken';
 
 function Success() {
     const [userInfo, setUserInfo] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
 
-        if (!token) {
-            navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
+        if (!token || token === 'null' || token === 'undefined' || token.split('.').length !== 3) {
+            navigate('/login');
             return;
         }
 
         try {
             const decoded = jwtDecode(token);
-            setUserInfo(decoded); // 사용자 정보 상태에 저장
+            setUserInfo(decoded);
         } catch (error) {
             console.error('토큰 디코드 오류:', error);
-            navigate('/login'); // 오류 발생 시 로그인 페이지로 리다이렉트
+            localStorage.removeItem("token");
+            navigate('/login');
         }
     }, [navigate]);
 
@@ -34,16 +34,11 @@ function Success() {
     const sendUserNumber = async () => {
         if (userInfo && userInfo.userNumber) {
             try {
-                const token = getStoredToken();
-                if (!token) {
-                    navigate('/login');
-                    return;
-                }
                 const response = await axios.post('/sendUserNumber', { //보내고 싶은 get 주소
                     userNumber: userInfo.userNumber,
                 }, {
                     headers: {
-                        Authorization: `Bearer ${token}` // 인증 토큰 추가
+                        Authorization: `Bearer ${localStorage.getItem("token")}` // 인증 토큰 추가
                     }
                 });
 

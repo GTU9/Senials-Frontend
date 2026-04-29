@@ -1,30 +1,19 @@
-// import axios from "axios";
-
-// const token = localStorage.getItem("token");
-
-// const api = axios.create({
-//     /* API 기본 URL - proxy 설정 없애면 baseURL 활성화 */
-//     // baseURL: 'http://localhost:8080', 
-//     headers: {
-//         'Authorization': token
-//     }
-// })
-
-// export default api;
-
 import axios from 'axios'; 
-import { getStoredToken } from '../../utils/authToken';
 
 const createApiInstance = () => {
 
-    const token = getStoredToken(); 
+    const token = localStorage.getItem("token"); 
+
+    // 토큰이 없거나 "null" 문자열인 경우 Authorization 헤더를 포함하지 않음
+    const headers = {};
+    if (token && token !== "null" && token.trim() !== "") {
+        headers['Authorization'] = token;
+    }
 
     return axios.create({ 
         /* API 기본 URL - proxy 설정 없애면 baseURL 활성화 */ 
         // baseURL: 'http://localhost:8080', 
-        headers: token
-            ? { 'Authorization': `Bearer ${token}` }
-            : {}
+        headers
     }); 
 }; 
 

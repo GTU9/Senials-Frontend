@@ -112,3 +112,12 @@
 .OrgloginButton:hover {
     background-color: #007bff; /* 호버 시 색상 변경 */
 }
+
+.loginAlert {
+    width: 405px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #c62828;
+    text-align: center;
+    line-height: 1.4;
+}

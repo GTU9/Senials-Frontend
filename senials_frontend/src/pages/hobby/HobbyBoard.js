@@ -1,12 +1,11 @@
 import React,{useState, useEffect} from 'react';
 import styles from './HobbyBoard.module.css';
 import ctr from '../common/MainVer1.module.css';
-import {FaAngleLeft, FaBell, FaSearch} from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { setHobbyCard,setHobbyTop3Card } from '../../redux/hobbySlice';
-import { getStoredToken } from '../../utils/authToken';
 
 function HobbyBoardPost() {
 
@@ -26,7 +25,7 @@ function HobbyBoardPost() {
 
     useEffect(() => {
         //취미 전체 조회
-        if(category!=null){
+        if (category !== null && category !== '') {
             axios.get(`/hobby-board/${category}`)
                 .then((response) => {
                     
@@ -45,10 +44,15 @@ function HobbyBoardPost() {
         //취미 top3 조회
         axios.get('/hobby-board/top3')
         .then((response) => {
-            dispatch(setHobbyTop3Card(response.data.results.hobby));
+            const r = response.data?.results;
+            const list = r?.hobby ?? r?.hobbies ?? r?.hobbyList;
+            dispatch(setHobbyTop3Card(Array.isArray(list) ? list : []));
         })
-        .catch((error) => console.error(error));
-    }, [dispatch]);
+        .catch((error) => {
+            console.error('[hobby-board/top3]', error?.response?.status, error?.response?.data ?? error.message);
+            dispatch(setHobbyTop3Card([]));
+        });
+    }, [dispatch, category]);
 
     useEffect(() => {
         setFilterList(hobbyList);
@@ -68,7 +72,7 @@ function HobbyBoardPost() {
 
     //건의 사항 추가 페이지 이동
     const linkSuggestion=()=>{
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
         if (!token) {
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
         } else {
@@ -87,12 +91,12 @@ function HobbyBoardPost() {
     return (
         <div className={styles.page}>            
             <div className={styles.title}>👑 <span style={{ color: "#FF5391" }}>인기</span> TOP3</div>
-            {category!=null&&(
+            {(category !== null && category !== '') && (
                 <button className={`${ctr.whiteBtn} ${ctr.mlAuto}`} onClick={() => linkHobby()}>전체보기</button>
             )}
             <div className={styles.top3List}>
                 
-            {top3List.map((item,index) => {
+            {(Array.isArray(top3List) ? top3List : []).map((item,index) => {
                 return <HobbyCard key={index} hobby={item} linkHobbyDetail={linkHobbyDetail}/>
             })}
          

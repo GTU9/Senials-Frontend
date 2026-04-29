@@ -14,7 +14,6 @@ import PopularPartyBoards from './PartyBoardComponent/PopularPartyBoards';
 // actions
 import { setRemain, setCursor, setSortMethod, setPartyKeyword, setWholeParties, addWholeParties, toggleLike } from '../../redux/partySlice';
 import { jwtDecode } from 'jwt-decode';
-import { getStoredToken } from '../../utils/authToken';
 
 
 const api = createApiInstance();
@@ -34,14 +33,9 @@ function PartyBoardOverview() {
     
     useEffect(() => {
 
-        const token = getStoredToken();
-        if (token) {
-            try {
-                setTokenUserNumber(jwtDecode(token).userNumber);
-            } catch (error) {
-                localStorage.removeItem("token");
-                setTokenUserNumber(null);
-            }
+        const token = localStorage.getItem('token');
+        if(token != null ) {
+            setTokenUserNumber(jwtDecode(token).userNumber);
         } 
 
 

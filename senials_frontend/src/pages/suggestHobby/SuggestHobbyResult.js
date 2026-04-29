@@ -5,7 +5,6 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import { setHobbyDetail,setHobbyTop3Card } from '../../redux/hobbySlice';
 import { useSelector,useDispatch } from 'react-redux';
 import {jwtDecode} from "jwt-decode";
-import { getStoredToken } from '../../utils/authToken';
 
 function SuggestHobbyPost() {
 
@@ -31,20 +30,15 @@ function SuggestHobbyPost() {
 
     // 마이페이지 이동 이벤트
     const linkMyPage=()=>{
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); 
             return;
-        } else {
-            try {
+        }else{
             const decodedToken = jwtDecode(token);
             const userNumber = decodedToken.userNumber;
             navigate(`/user/${userNumber}/favorites`); 
-            } catch (error) {
-                localStorage.removeItem("token");
-                navigate('/login');
-            }
         }
         
     }
@@ -68,9 +62,15 @@ function SuggestHobbyPost() {
 
         axios.get('/hobby-board/top3')
         .then((response) => {
-            dispatch(setHobbyTop3Card(response.data.results.hobby));
+            const r = response.data?.results;
+            const list = r?.hobby ?? r?.hobbies ?? r?.hobbyList;
+            dispatch(setHobbyTop3Card(Array.isArray(list) ? list : []));
         })
-    }, [dispatch]);
+        .catch((error) => {
+            console.error('[hobby-board/top3]', error?.response?.status, error?.response?.data ?? error.message);
+            dispatch(setHobbyTop3Card([]));
+        });
+    }, [dispatch, hobbyAbility, hobbyBudget, hobbyLevel, hobbyTendency]);
 
     return (
         <>
@@ -94,7 +94,7 @@ function SuggestHobbyPost() {
                 <div className={styles.otherHobby}>
                     <div className={styles.subtitle}>지금  <span style={{color:'#FF5391'}}>핫한</span> 취미들</div>         
                         <div className={styles.otherHobbyDetail}>
-                            {top3List.map((item,index) => {
+                            {(Array.isArray(top3List) ? top3List : []).map((item,index) => {
                                  return <OtherHobby key={index} hobby={item} linkHobby={linkHobby}/>
                             })}
                         </div>

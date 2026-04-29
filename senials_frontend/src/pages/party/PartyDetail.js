@@ -18,7 +18,6 @@ import { setMember, setPartyBoardDetail, toggleDetailLike,
 // CSS
 import styles from '../common/MainVer1.module.css';
 import { jwtDecode } from "jwt-decode";
-import { getStoredToken } from "../../utils/authToken";
 
 function PartyDetail() {
 
@@ -58,14 +57,10 @@ function PartyDetail() {
 
     useEffect(() => { 
 
-        const token = getStoredToken();
+        const token = localStorage.getItem('token');
         if(token != null) {
-            try {
-                const decodedToken = jwtDecode(token);
-                tokenUserNumber.current = decodedToken.userNumber;
-            } catch (error) {
-                tokenUserNumber.current = 0;
-            }
+            const decodedToken = jwtDecode(token);
+            tokenUserNumber.current = decodedToken.userNumber;
         }
 
         const fetchData = async () => { 

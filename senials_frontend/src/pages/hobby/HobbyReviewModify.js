@@ -4,7 +4,6 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { setHobbyReview } from '../../redux/hobbySlice';
 import { useSelector,useDispatch } from 'react-redux';
-import { getStoredToken } from '../../utils/authToken';
 
 function HobbyReviewGet() {
     const dispatch=useDispatch();
@@ -25,14 +24,10 @@ function HobbyReviewGet() {
 
   // 기존 데이터 조회
   useEffect(() => {
-      const token = getStoredToken();
-      if (!token) {
-          navigate('/login');
-          return;
-      }
+      const token = localStorage.getItem("token");
       axios.get(`/${hobbyNumber}/hobby-review/${reviewNumber}`,{
           headers: {
-              'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
+              'Authorization': token // JWT 토큰을 Authorization 헤더에 추가
           }
       })
         .then(response => {
@@ -75,14 +70,10 @@ function HobbyReviewGet() {
     //해당 리뷰 삭제 이벤트
     const linkDeleteReview = async () => {
         try {
-            const token = getStoredToken();
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+            const token = localStorage.getItem("token");
             await axios.delete(`/${hobbyNumber}/hobby-review/${reviewNumber}`,{
                 headers: {
-                    'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
+                    'Authorization': token // JWT 토큰을 Authorization 헤더에 추가
                 }
             });
             alert("후기가 삭제되었습니다.");
@@ -108,14 +99,10 @@ function HobbyReviewGet() {
     };
 
     try {
-        const token = getStoredToken();
-        if (!token) {
-            navigate('/login');
-            return;
-        }
+        const token = localStorage.getItem("token");
         await axios.put(`/${hobbyNumber}/hobby-review/${reviewNumber}`, reviewData,{
             headers: {
-                'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
+                'Authorization': token // JWT 토큰을 Authorization 헤더에 추가
             }
         });
         

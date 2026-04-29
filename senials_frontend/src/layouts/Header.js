@@ -1,9 +1,8 @@
 import React,{useState} from 'react';
 import styles from './Header.module.css'
-import {FaAngleLeft, FaBell, FaSearch} from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from "jwt-decode";
-import { getStoredToken } from "../utils/authToken";
 
 const Header = () => {
 
@@ -26,21 +25,20 @@ const Header = () => {
 
     // 마이페이지 이동 이벤트
     const linkMyPage = () => {
-        const token = getStoredToken();
-        if (!token) {
+        const token = localStorage.getItem("token");
+        if (!token || token === 'null' || token === 'undefined' || token.split('.').length !== 3) {
             alert("로그인이 필요합니다!")
-            navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
+            navigate('/login');
             return;
         }
 
         try {
-            const decodedToken = jwtDecode(token); // JWT 디코드
-            const userNumber = decodedToken.userNumber; // userNumber 추출
-
-            navigate(`/user/${userNumber}/meet`); // 마이페이지로 이동
-        } catch (error) {
+            const decodedToken = jwtDecode(token);
+            const userNumber = decodedToken.userNumber;
+            navigate(`/user/${userNumber}/meet`);
+        } catch (e) {
             localStorage.removeItem("token");
-            alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+            alert("로그인이 필요합니다!")
             navigate('/login');
         }
     };
@@ -63,9 +61,10 @@ const Header = () => {
         navigate('/login'); // 로그인 페이지로 리다이렉트
     };
 
-    // 토큰 존재 여부 확인
-    const token = getStoredToken();
-    const isLoggedIn = !!token; // 토큰이 존재하면 true, 아니면 false
+    // 토큰 존재 여부 확인 (유효한 JWT 형식인지 검사)
+    const token = localStorage.getItem("token");
+    const isValidToken = token && token !== 'null' && token !== 'undefined' && token.split('.').length === 3;
+    const isLoggedIn = !!isValidToken;
 
     //키워드 입력 후 페이지 이동
     const [keyword, setKeyword] = useState('');

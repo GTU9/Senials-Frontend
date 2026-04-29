@@ -1,9 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { normalizeToken, isJwtFormat } from "../../utils/authToken";
 // CSS
 import styles from './Login.module.css';
+
+const isJwtToken = (token) => {
+    if (!token || token === 'null' || token === 'undefined') {
+        return false;
+    }
+
+    return token.split('.').length === 3;
+};
+
+/** 로그인 API가 토큰을 내려주는 방식이 제각각일 수 있어 후보를 순서대로 탐색 */
+const extractTokenFromLoginResponse = (response) => {
+    const d = response.data || {};
+    const fromBody =
+        d.token ??
+        d.accessToken ??
+        d.access_token ??
+        d.jwt;
+    if (fromBody && typeof fromBody === 'string') {
+        return fromBody.trim();
+    }
+
+    const auth = response.headers?.authorization;
+    if (auth && typeof auth === 'string') {
+        const trimmed = auth.trim();
+        const bearer = trimmed.match(/^Bearer\s+(.+)$/i);
+        return (bearer ? bearer[1] : trimmed).trim();
+    }
+
+    return null;
+};
 
 function Login() {
     const navigate = useNavigate();
@@ -18,7 +47,7 @@ function Login() {
 
     const handleKakaoLogin = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/init-kakao-login'); // 백엔드에서 카카오 로그인 초기화
+            const response = await axios.get('/api/init-kakao-login'); // 백엔드에서 카카오 로그인 초기화 (proxy 사용)
             const { authUrl } = response.data; // 백엔드에서 전달받은 카카오 인증 URL
 
             alert("카카오 인증 URL: " + authUrl);
@@ -39,17 +68,32 @@ function Login() {
                 userPwd
             });
 
-            // 로그인 성공 시 Authorization 헤더 우선 사용
+            // 로그인 성공 시 처리
             console.log('로그인 성공:', response.data);
-            const headerToken = normalizeToken(response.headers?.authorization);
-            const bodyToken = normalizeToken(response.data?.token);
-            const token = headerToken || bodyToken;
+            const token = extractTokenFromLoginResponse(response);
 
-            if (!isJwtFormat(token)) {
-                throw new Error("유효한 JWT를 받지 못했습니다.");
+            if (!token) {
+                console.warn(
+                    '로그인 응답에 JWT가 없습니다. JSON에 token(또는 accessToken)을 넣거나 Authorization 헤더로 내려주세요.',
+                    response.data,
+                    response.headers
+                );
+                setErrorMessage(
+                    '서버에서 토큰을 받지 못했습니다. 백엔드가 로그인 성공 시 JWT를 응답 본문 또는 Authorization 헤더로 내려주는지 확인해 주세요.'
+                );
+                alert(
+                    '로그인 응답에 토큰이 없습니다.\n백엔드 successfulAuthentication에서 JSON에 token 필드를 포함하거나, 프론트와 맞는 필드명으로 내려주세요.'
+                );
+                return;
             }
 
-            localStorage.setItem("token", token);
+            if (!isJwtToken(token)) {
+                setErrorMessage('받은 토큰이 JWT 형식이 아닙니다.');
+                alert('로그인 토큰 형식이 올바르지 않습니다.');
+                return;
+            }
+
+            localStorage.setItem("token", token); // JWT를 로컬 스토리지에 저장
 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
@@ -74,11 +118,17 @@ function Login() {
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const token = normalizeToken(urlParams.get('token')); // URL에서 token 추출
+        const token = urlParams.get('token'); // URL에서 token 추출
 
-        if (isJwtFormat(token)) {
+        if (token) {
             // JWT가 URL 파라미터에 있을 경우
-            localStorage.setItem("token", token);
+            if (!isJwtToken(token)) {
+                localStorage.removeItem("token");
+                alert("로그인 토큰이 유효하지 않습니다. 다시 로그인해주세요.");
+                navigate('/login');
+                return;
+            }
+            localStorage.setItem("token", token); // JWT를 로컬 스토리지에 저장
             console.log('JWT 저장 완료:', token);
             navigate('/success'); // 성공 페이지로 리다이렉트
         }
@@ -111,9 +161,14 @@ function Login() {
                 >
                     {isLoading ? '로그인 중...' : '확인'} {/* 로딩 중일 때 텍스트 변경 */}
                 </button>
-                {/*{errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>} /!* 에러 메시지 표시 *!/*/}
+                {errorMessage ? (
+                    <div className={styles.loginAlert} role="alert">{errorMessage}</div>
+                ) : null}
             </div>
             <div className={styles.buttonContainer}>
+                <button type="button" className={styles.simpleSignupButton} onClick={handleKakaoLogin}>
+                    카카오 로그인
+                </button>
                 <button className={styles.simpleSignupButton} onClick={linkSignup}>
                     일반 회원가입
                 </button>

@@ -9,8 +9,13 @@ import axios from 'axios';
 import { setHobbyDetail,setHobbyReview} from '../../redux/hobbySlice';
 import { useParams } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
-import { getStoredToken } from '../../utils/authToken';
 
+const isJwtToken = (token) => {
+    if (!token || token === 'null' || token === 'undefined') {
+        return false;
+    }
+    return token.split('.').length === 3;
+};
 
    //성향 출력
    const getTendency = (tendency) => {
@@ -73,15 +78,18 @@ function HobbyDetailPost() {
 
     useEffect(() => {
 
-        const token = getStoredToken();
-        if (token) {
+        const token = localStorage.getItem('token');
+        if (isJwtToken(token)) {
             try {
                 const decodedUserNumber = jwtDecode(token).userNumber;
                 setUserNumber(decodedUserNumber);
-            } catch (error) {
-                localStorage.removeItem("token");
+            } catch {
+                localStorage.removeItem('token');
                 setUserNumber(null);
             }
+        } else if (token && token !== 'null' && token !== 'undefined') {
+            localStorage.removeItem('token');
+            setUserNumber(null);
         }
 
         if (hobbyNumber) {
@@ -127,12 +135,12 @@ function HobbyDetailPost() {
 
     //후기작성페이지 이동 이벤트
     const linkHobbyReview = () => {
-        const token = getStoredToken();
-        if (!token) {
-            navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
-        } else {
-            navigate(`/hobby-review?hobbyNumber=${hobbyNumber}`);
+        const token = localStorage.getItem('token');
+        if (!isJwtToken(token)) {
+            navigate('/login');
+            return;
         }
+        navigate(`/hobby-review?hobbyNumber=${hobbyNumber}`);
     };
 
     //작성된 후기 수정 페이지 이동 이벤트

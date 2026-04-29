@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { FaAngleLeft, FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { getStoredToken, getStoredUserNumber } from "../../utils/authToken";
+import {jwtDecode} from "jwt-decode";
 
 function MypageModify() {
 
@@ -30,17 +30,14 @@ function MypageModify() {
     // 사용자 정보 가져오기
     useEffect(() => {
 
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
             return;
         }
-        const userNumber = getStoredUserNumber();
-        if (!userNumber) {
-            navigate('/login');
-            return;
-        }
+        const decodedToken = jwtDecode(token); // JWT 디코드
+        const userNumber = decodedToken.userNumber; // userNumber 추출
 
         const fetchUserData = async () => {
             try {
@@ -74,17 +71,14 @@ function MypageModify() {
 
 
             try {
-                const token = getStoredToken();
+                const token = localStorage.getItem("token");
                 if (!token) {
                     alert("로그인이 필요합니다!")
                     navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
                     return;
                 }
-                const userNumber = getStoredUserNumber();
-                if (!userNumber) {
-                    navigate('/login');
-                    return;
-                }
+                const decodedToken = jwtDecode(token); // JWT 디코드
+                const userNumber = decodedToken.userNumber; // userNumber 추출
 
                 // 이미지 업로드 API 호출
                 const formData = new FormData();
@@ -92,7 +86,7 @@ function MypageModify() {
                 const response = await axios.post(`/users/${userNumber}/profile/upload`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data"
-                        , 'Authorization': `Bearer ${token}`
+                        , 'Authorization': token
                     },
                 });
 
@@ -115,17 +109,14 @@ function MypageModify() {
     // 데이터 저장 요청
     const handleSave = async () => {
         try {
-            const token = getStoredToken();
+            const token = localStorage.getItem("token");
             if (!token) {
                 alert("로그인이 필요합니다!")
                 navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
                 return;
             }
-            const userNumber = getStoredUserNumber();
-            if (!userNumber) {
-                navigate('/login');
-                return;
-            }
+            const decodedToken = jwtDecode(token); // JWT 디코드
+            const userNumber = decodedToken.userNumber; // userNumber 추출
 
             const response = await axios.put(`/users/${userNumber}/modify`, {
                 userNickname: nickname,
@@ -147,18 +138,15 @@ function MypageModify() {
   /*  const imgSrc = `/img/userProfile/${userNumber}`;*/
     // const imgSrc = `/img/userProfile/${userNumber}?t=${new Date().getTime()}`;
     const fetchUserProfileImage = async () => {
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
         if (!token) {
             alert("로그인이 필요합니다!")
             navigate('/login'); // 토큰이 없으면 로그인 페이지로 리다이렉트
             return;
         }
         try {
-            const userNumber = getStoredUserNumber();
-            if (!userNumber) {
-                navigate('/login');
-                return '/img/defaultProfile.png';
-            }
+            const decodedToken = jwtDecode(token);
+            const userNumber = decodedToken.userNumber;
 
             // 프로필 이미지 URL 설정
             const imageUrl = userNumber ? `/img/userProfile/${userNumber}?t=${new Date().getTime()}` : '/img/defaultProfile.png';

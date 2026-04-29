@@ -5,7 +5,7 @@ import main from '../common/MainVer1.module.css';
 import {FaAngleLeft} from "react-icons/fa";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import { getStoredToken, getStoredUserNumber } from '../../utils/authToken';
+import {jwtDecode} from "jwt-decode";
 
 function MypageMade({userNumber}) {
     const [madeParties, setMadeParties] = useState([]);
@@ -17,18 +17,15 @@ function MypageMade({userNumber}) {
 
     // 만든 모임 데이터 가져오기
     useEffect(() => {
-        const token = getStoredToken();
+        const token = localStorage.getItem("token");
         if (!token) {
             // 토큰이 없을 경우 처리
             console.error("토큰이 없습니다.");
             return;
         }
 
-        const userNumber = getStoredUserNumber();
-        if (!userNumber) {
-            navigate('/login');
-            return;
-        }
+        const decodedToken = jwtDecode(token); // JWT 디코드
+        const userNumber = decodedToken.userNumber; // userNumber 추출
 
         const fetchMadeParties = async () => {
             try {

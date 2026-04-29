@@ -11,7 +11,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import createApiInstance from '../common/tokenApi';
 import { jwtDecode } from 'jwt-decode';
-import { getStoredToken } from '../../utils/authToken';
 
 function PartyMember() {
     
@@ -31,20 +30,14 @@ function PartyMember() {
 
     useEffect(() => {
 
-        const token = getStoredToken();
+        const token = localStorage.getItem('token');
         if(token == null) {
             needLogin();
             return;
         } 
 
-        let tokenUserNumber;
-        try {
-            const decodedToken = jwtDecode(token);
-            tokenUserNumber = decodedToken.userNumber;
-        } catch (error) {
-            needLogin();
-            return;
-        }
+        const decodedToken = jwtDecode(token);
+        const tokenUserNumber = decodedToken.userNumber;
         if(tokenUserNumber === undefined) {
             needLogin();
             return;

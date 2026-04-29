@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React, { useEffect } from 'react';
 import styles from './HobbyBoard.module.css';
 import ctr from '../common/MainVer1.module.css';
 import { useNavigate } from 'react-router-dom';
@@ -19,9 +19,14 @@ function HobbyBoardPost() {
         //취미 top3 조회
         axios.get('/hobby-board/top3')
         .then((response) => {
-            dispatch(setHobbyTop3Card(response.data.results.hobby));
+            const r = response.data?.results;
+            const list = r?.hobby ?? r?.hobbies ?? r?.hobbyList;
+            dispatch(setHobbyTop3Card(Array.isArray(list) ? list : []));
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+            console.error('[hobby-board/top3]', error?.response?.status, error?.response?.data ?? error.message);
+            dispatch(setHobbyTop3Card([]));
+        });
 
         //카테고리 조회
         axios.get('/categories')
@@ -48,7 +53,7 @@ function HobbyBoardPost() {
             <button className={`${ctr.whiteBtn} ${ctr.mlAuto}`} onClick={() => linkHobby()}>전체보기</button>
             <div className={styles.top3List}>
             
-            {top3List.map((item,index) => {
+            {(Array.isArray(top3List) ? top3List : []).map((item,index) => {
                 return <HobbyCard key={index} hobby={item} linkHobby={linkHobbyDetail}/>
             })}
     
@@ -106,7 +111,7 @@ function Category({ navigate }) {
             })
         }
         {
-            length % maxLength != 0 ?
+            length % maxLength !== 0 ?
             Array.from({length: maxLength - (length % maxLength)}).map((_, i) => {
                 return <div key={`emptyCtgr${i}`} className={`${ctr.emptyCtgrContainer}`} />
             })
