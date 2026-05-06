@@ -1,106 +1,163 @@
-.background{
-    position: absolute; 
-    top: 0; 
-    left: 0;
-    width: 100%;
-    height: 50vh;
-    background-image: url(/public/img/sampleBackgroundImg.png);
-    background-repeat: no-repeat; 
-    background-size: cover;
-    z-index: -2; 
-}
-
 .page {
     width: 1280px;
     margin: 0 auto;
-    
 }
 
-.hobby {
-    display: flex;
-    margin: 30px 0;
-    margin-left: 100px;
-}
-
-.hobbyImg {
-    width: 300px;
+/* ── 히어로 섹션 ── */
+.hero {
+    position: relative;
+    width: 100%;
     height: 300px;
-    margin-right: 20px;
-    border:1px solid #c2c2c2;
-    border-radius: 10px;
-}
-
-.hobbyName {
-    font-size: 33px;
-    display: block;
-    font-weight: bold;
-    margin: 25px 5px;
-}
-
-.hobbyDetail {
-    font-size: 23px;
-    margin-top: 20px;
-}
-
-.hobbyText {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 250px; 
-    max-width: 600px;
-}
-
-.preference {
-    font-size: 18px;
+    overflow: hidden;
+    border-radius: 12px;
     margin-bottom: 0;
 }
 
-.progressBarContainer {
-    max-width:280px;
-    width: 280px; 
-    height: 25px; 
-    background-color: #e0e0e0; 
-    border: 1px solid black;
-    border-radius: 5px; 
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+.heroBg {
+    position: absolute;
+    inset: 0;
+    background-image: url('/img/sampleBackgroundImg.png');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.75);
 }
 
-.progressBar {
-    height: 100%; 
-    background-color: #FF5391;  
-    transition: width 0.5s ease;
+.heroOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 140px;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
 }
 
-.hobbyPoint {
-    border: 1px solid #c2c2c2;
-    margin-top: 100px;
+.heroContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.hobbyImg {
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.5);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.15);
+}
+
+.heroText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hobbyName {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+}
+
+.hobbyDetail {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+}
+
+/* ── 선호도 바 ── */
+.preferenceWrap {
+    background-color: white;
+    border: 0.5px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+}
+
+.preferenceLabel {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-direction: row;
-    border-radius: 10px;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 8px;
 }
 
-.hobbyAbility,
-.hobbyBudget,
-.hobbyLevel {
+.preferencePct {
+    font-size: 15px;
+    font-weight: bold;
+    color: #FF5391;
+}
+
+.progressBarContainer {
+    width: 100%;
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background-color: #FF5391;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* ── 특성 카드 3개 ── */
+.hobbyPoint {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.statCard {
     background-color: white;
-    font-size: 23px;
+    border: 0.5px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+
+.statValue {
+    font-size: 16px;
+    font-weight: bold;
+    color: #222;
+    margin: 0;
+}
+
+.statBar {
+    display: flex;
+    gap: 4px;
+}
+
+.statBarSeg {
     flex: 1;
-    text-align: center;
-    border-left: 1px solid #c2c2c2;
-    padding: 10px 0;
+    height: 3px;
+    border-radius: 2px;
+    background-color: #f0f0f0;
 }
 
-.hobbyAbility {
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
-
-.hobbyLevel {
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+.statBarSegFilled {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
 }
 
 hr {

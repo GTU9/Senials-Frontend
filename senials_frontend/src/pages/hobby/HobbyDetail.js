@@ -158,43 +158,75 @@ function HobbyDetailPost() {
 
     return (
         <>
-        <div className={styles.background}>
-           
-        </div>
         <div className={styles.page}>
-            <div className={styles.hobby}>
-                <img src={`/img/hobbyboard/${hobbyNumber}`} className={styles.hobbyImg} alt="취미" />
-                <div className={styles.hobbyText}>
-                    <div className={styles.hobbyName}>{hobbyDetail.hobbyName}</div>
-                    <div className={styles.hobbyDetail}>{hobbyDetail.hobbyExplain}</div>
-                    <div className={styles.preference}>
-                        <div>평균 선호도 : {setPercentage(hobbyDetail.rating)}%</div>
-                        <div className={styles.progressBarContainer}>
-                            <div 
-                                className={styles.progressBar} 
-                                style={{ width: `${setPercentage(hobbyDetail.rating)}%` }} 
-                            ></div>
-                        </div>
+            {/* 히어로 섹션 */}
+            <div className={styles.hero}>
+                <div className={styles.heroBg}></div>
+                <div className={styles.heroOverlay}></div>
+                <div className={styles.heroContent}>
+                    <img src={`/img/hobbyboard/${hobbyNumber}`} className={styles.hobbyImg} alt="취미" />
+                    <div className={styles.heroText}>
+                        <div className={styles.hobbyName}>{hobbyDetail.hobbyName}</div>
+                        <div className={styles.hobbyDetail}>{hobbyDetail.hobbyExplain}</div>
                     </div>
                 </div>
             </div>
-            <div className={styles.hobbyPoint}>
-                <div className={styles.hobbyAbility}>성향<br />
-                    <span style={{color:"#808080"}}>
-                        {getTendency(hobbyDetail.hobbyTendency)}
-                    </span>
+
+            {/* 선호도 바 */}
+            <div className={styles.preferenceWrap}>
+                <div className={styles.preferenceLabel}>
+                    <span>평균 선호도</span>
+                    <span className={styles.preferencePct}>{setPercentage(hobbyDetail.rating)}%</span>
                 </div>
-                <div className={styles.hobbyBudget}>지출범위<br />
-                    <span style={{color:"#808080"}}>
-                        {getBudget(hobbyDetail.hobbyBudget)}
-                    </span>
-                </div>
-                <div className={styles.hobbyLevel}>난이도<br/>
-                    <span style={{color:"#808080"}}>
-                        {getLevel(hobbyDetail.hobbyLevel)}
-                    </span>
+                <div className={styles.progressBarContainer}>
+                    <div
+                        className={styles.progressBar}
+                        style={{ width: `${setPercentage(hobbyDetail.rating)}%` }}
+                    ></div>
                 </div>
             </div>
+
+            {/* 특성 카드 3개 */}
+            <div className={styles.hobbyPoint}>
+                {/* 성향 */}
+                <div className={styles.statCard}>
+                    <p className={styles.statLabel}>성향</p>
+                    <p className={styles.statValue}>{getTendency(hobbyDetail.hobbyTendency)}</p>
+                    <div className={styles.statBar}>
+                        <div className={styles.statBarSegFilled} style={{background:'#1D9E75'}}></div>
+                        <div className={styles.statBarSeg}></div>
+                    </div>
+                </div>
+                {/* 지출범위 */}
+                <div className={styles.statCard}>
+                    <p className={styles.statLabel}>지출 범위</p>
+                    <p className={styles.statValue}>{getBudget(hobbyDetail.hobbyBudget)}</p>
+                    <div className={styles.statBar}>
+                        {[0,1,2].map((i) => (
+                            <div
+                                key={i}
+                                className={hobbyDetail.hobbyBudget > i ? styles.statBarSegFilled : styles.statBarSeg}
+                                style={hobbyDetail.hobbyBudget > i ? {background:'#EF9F27'} : {}}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+                {/* 난이도 */}
+                <div className={styles.statCard}>
+                    <p className={styles.statLabel}>난이도</p>
+                    <p className={styles.statValue}>{getLevel(hobbyDetail.hobbyLevel)}</p>
+                    <div className={styles.statBar}>
+                        {[0,1,2,3].map((i) => (
+                            <div
+                                key={i}
+                                className={hobbyDetail.hobbyLevel > i ? styles.statBarSegFilled : styles.statBarSeg}
+                                style={hobbyDetail.hobbyLevel > i ? {background:'#378ADD'} : {}}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             <hr />
             <div className={styles.reviewHeader}>
                 <div className={styles.reviewCount}>{`후기 ${hobbyDetail.reviewCount}`}</div>
