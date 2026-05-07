@@ -193,8 +193,13 @@ function HobbyDetailPost() {
                     <p className={styles.statLabel}>성향</p>
                     <p className={styles.statValue}>{getTendency(hobbyDetail.hobbyTendency)}</p>
                     <div className={styles.statBar}>
-                        <div className={styles.statBarSegFilled} style={{background:'#1D9E75'}}></div>
-                        <div className={styles.statBarSeg}></div>
+                        {[0,1].map((i) => (
+                            <div
+                                key={i}
+                                className={hobbyDetail.hobbyTendency >= i ? styles.statBarSegFilled : styles.statBarSeg}
+                                style={hobbyDetail.hobbyTendency >= i ? {background:'#1D9E75'} : {}}
+                            ></div>
+                        ))}
                     </div>
                 </div>
                 {/* 지출범위 */}
@@ -205,8 +210,8 @@ function HobbyDetailPost() {
                         {[0,1,2].map((i) => (
                             <div
                                 key={i}
-                                className={hobbyDetail.hobbyBudget > i ? styles.statBarSegFilled : styles.statBarSeg}
-                                style={hobbyDetail.hobbyBudget > i ? {background:'#EF9F27'} : {}}
+                                className={hobbyDetail.hobbyBudget >= i ? styles.statBarSegFilled : styles.statBarSeg}
+                                style={hobbyDetail.hobbyBudget >= i ? {background:'#EF9F27'} : {}}
                             ></div>
                         ))}
                     </div>
@@ -219,8 +224,8 @@ function HobbyDetailPost() {
                         {[0,1,2,3].map((i) => (
                             <div
                                 key={i}
-                                className={hobbyDetail.hobbyLevel > i ? styles.statBarSegFilled : styles.statBarSeg}
-                                style={hobbyDetail.hobbyLevel > i ? {background:'#378ADD'} : {}}
+                                className={hobbyDetail.hobbyLevel >= i ? styles.statBarSegFilled : styles.statBarSeg}
+                                style={hobbyDetail.hobbyLevel >= i ? {background:'#378ADD'} : {}}
                             ></div>
                         ))}
                     </div>
