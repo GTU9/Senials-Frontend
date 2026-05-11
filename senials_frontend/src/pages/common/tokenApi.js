@@ -10,11 +10,10 @@ const createApiInstance = () => {
         headers['Authorization'] = token;
     }
 
-    return axios.create({ 
-        /* API 기본 URL - proxy 설정 없애면 baseURL 활성화 */ 
-        // baseURL: 'http://localhost:8080', 
+    return axios.create({
+        baseURL: process.env.REACT_APP_API_URL,
         headers
-    }); 
+    });
 }; 
 
 export default createApiInstance;
