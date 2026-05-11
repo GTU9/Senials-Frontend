@@ -22,6 +22,8 @@ function HobbyBoardPost() {
     //검색 텍스트, 필터링 목록
     const[searchText, setSearchText]=useState("");
     const[filterList,setFilterList]=useState([]);
+    const PAGE_SIZE = 16;
+    const[visibleCount, setVisibleCount]=useState(PAGE_SIZE);
 
     useEffect(() => {
         //취미 전체 조회
@@ -84,9 +86,13 @@ function HobbyBoardPost() {
     //검색 버튼 클릭시 목록 필터링 이벤트
     const textSearch=(e)=>{
         e.preventDefault();
-
         const filtered=hobbyList.filter(item=>item.hobbyName.includes(searchText));
         setFilterList(filtered);
+        setVisibleCount(PAGE_SIZE);
+    }
+
+    const loadMore = () => {
+        setVisibleCount(prev => prev + PAGE_SIZE);
     }
     return (
         <div className={styles.page}>            
@@ -107,9 +113,16 @@ function HobbyBoardPost() {
                 <button type="submit" className={styles.searchButton}><FaSearch size={20}/></button>
             </form>
 
-            {filterList.map((item,index)=>{
-                return <HobbyList key={index} hobby={item} linkHobbyDetail={linkHobbyDetail}/>
-            })}
+            <div className={styles.hobbyListGrid}>
+                {filterList.slice(0, visibleCount).map((item,index)=>{
+                    return <HobbyList key={index} hobby={item} linkHobbyDetail={linkHobbyDetail}/>
+                })}
+            </div>
+            {visibleCount < filterList.length &&
+                <div style={{display:'flex', justifyContent:'center', margin:'24px 0'}}>
+                    <span className={ctr.commonBtn} onClick={loadMore}>더보기</span>
+                </div>
+            }
             
             <button className={styles.suggestHobbyButton} onClick={linkSuggestion}>취미 추가 건의</button>
         </div>
@@ -136,25 +149,19 @@ function HobbyCard({ hobby,linkHobbyDetail }){
 
 function HobbyList({hobby,linkHobbyDetail}){
     return(
-        <>
         <div className={styles.hobbyList} onClick={()=>linkHobbyDetail(hobby.hobbyNumber)}>
-        <img src={`/img/hobbyboard/${hobby.hobbyNumber}`} className={styles.hobbyImg} alt="축구" />
-        <div>
-            <div className={styles.hobbyName}>{hobby.hobbyName}</div>
-
-            <div className={styles.thirdFont}>선호도 : {setPercentage(hobby.rating)}%</div>
-            <div className={styles.progressBarContainer}>
-                <div
-                    className={styles.progressBar}
-                    style={{ width: `${setPercentage(hobby.rating)}%` }}
-                ></div>
+            <img src={`/img/hobbyboard/${hobby.hobbyNumber}`} className={styles.hobbyImg} alt={hobby.hobbyName} />
+            <div className={styles.hobbyListContent}>
+                <div className={styles.hobbyName}>{hobby.hobbyName}</div>
+                <div className={styles.progressBarContainer}>
+                    <div
+                        className={styles.progressBar}
+                        style={{ width: `${setPercentage(hobby.rating)}%` }}
+                    ></div>
+                </div>
+                <div className={styles.hobbyDetail}>{hobby.hobbyExplain}</div>
             </div>
-            <div className={styles.hobbyDetail}>{hobby.hobbyExplain}</div>
         </div>
-    </div>
-
-    <button className={styles.suggestHobbyButton}>취미 추가 건의</button>
-    </>
     );
 }
 

@@ -7,13 +7,12 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import createApiInstance from "../common/tokenApi";
 
-import { setMember, setPartyBoardDetail, toggleDetailLike, 
-    setMeets, increaseMeetPageNumber, setHasMoreMeets, toggleMeetJoined, 
-    setReviews, setHasMoreReviews, setReviewCnt, setAvgReviewRate, increaseReviewPageNumber, 
+import { setMember, setPartyBoardDetail, toggleDetailLike,
+    setMeets, increaseMeetPageNumber, setHasMoreMeets, toggleMeetJoined,
+    setReviews, setHasMoreReviews, setReviewCnt, setAvgReviewRate, increaseReviewPageNumber,
     setRecommParties, toggleRecommLike,
     addReviews,
-    addMeets,
-    partyBoardDetail} from "../../redux/partySlice";
+    addMeets } from "../../redux/partySlice";
 
 // CSS
 import styles from '../common/MainVer1.module.css';
@@ -65,16 +64,17 @@ function PartyDetail() {
 
         const fetchData = async () => { 
             try { 
-                const response1 = await api.get(`/partyboards/${partyNumber}`); 
-                const results1 = response1.data.results; 
-                let partyBoardDetail = results1.partyBoard; 
-                partyBoardDetail.partyMaster = results1.partyMaster; 
-                partyBoardDetail.myReview = results1.myReview; 
-                partyBoardDetail.isLiked = results1.isLiked; 
-                partyBoardDetail.isMember = results1.isMember; 
-                partyBoardDetail.isMaster = results1.isMaster; 
-                partyBoardDetail.randMembers = results1.randMembers; 
-                dispatch(setPartyBoardDetail(results1.partyBoard)); 
+                const response1 = await api.get(`/partyboards/${partyNumber}`);
+                const results1 = response1.data.results;
+                dispatch(setPartyBoardDetail({
+                    ...results1.partyBoard,
+                    partyMaster: results1.partyMaster,
+                    myReview: results1.myReview,
+                    isLiked: results1.isLiked,
+                    isMember: results1.isMember,
+                    isMaster: results1.isMaster,
+                    randMembers: results1.randMembers,
+                }));
 
                 const response2 = await api.get(`/partyboards/${partyNumber}/meets`); 
                 const results2 = response2.data.results; 
@@ -632,6 +632,10 @@ function Meet({meet, idx, isMaster, navigate}) {
     let finishTime = meet.meetFinishTime.substring(0, meet.meetFinishTime.lastIndexOf(':'));
 
     const joinMeet = () => {
+        if (!localStorage.getItem('token')) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
         api.post(`/meets/${meet.meetNumber}/meetmembers`)
             .then(response => {
                 dispatch(toggleMeetJoined({"idx" : idx, "isJoined" : true}))

@@ -21,7 +21,6 @@ const api = createApiInstance();
 
 function PartyBoardOverview() {
 
-    const [api, setApi] = useState();
     const [tokenUserNumber, setTokenUserNumber] = useState(null);
 
     const navigate = useNavigate();
@@ -29,18 +28,16 @@ function PartyBoardOverview() {
     const dispatch = useDispatch();
 
     const { isRemain, cursor, sortMethod, partyKeyword, wholeParties } = useSelector((state) => state);
-    
-    
+
+
     useEffect(() => {
 
         const token = localStorage.getItem('token');
         if(token != null ) {
             setTokenUserNumber(jwtDecode(token).userNumber);
-        } 
+        }
 
-
-        setApi(createApiInstance);
-        let api = createApiInstance();
+        const api = createApiInstance();
 
 
         if(wholeParties.length === 0) {
@@ -62,12 +59,13 @@ function PartyBoardOverview() {
 
     const loadMoreParties = () => {
 
-        axios.get(`/partyboards/search?sortMethod=${sortMethod}&keyword=${partyKeyword}&cursor=${cursor}`)
+        const cursorParam = cursor != null ? `&cursor=${cursor}` : '';
+        axios.get(`/partyboards/search?sortMethod=${sortMethod}&keyword=${partyKeyword}${cursorParam}`)
         .then(result => {
             let results = result.data.results;
 
             dispatch(setRemain(results.isRemain));
-            dispatch(setCursor(results.cursor))
+            dispatch(setCursor(results.cursor));
             dispatch(addWholeParties(results.partyBoards));
         });
 

@@ -161,7 +161,7 @@ function HobbyDetailPost() {
         <div className={styles.page}>
             {/* 히어로 섹션 */}
             <div className={styles.hero}>
-                <div className={styles.heroBg}></div>
+                <div className={styles.heroBg} style={{ backgroundImage: `url(/img/hobbyboard/${hobbyNumber})` }}></div>
                 <div className={styles.heroOverlay}></div>
                 <div className={styles.heroContent}>
                     <img src={`/img/hobbyboard/${hobbyNumber}`} className={styles.hobbyImg} alt="취미" />
@@ -261,14 +261,16 @@ function HobbyReview({ review, linkHobbyReviewModify, userNumber, linkHobbyRevie
                     <img src={`/img/userProfile/${review.userNumber}`} onError={(e) => e.target.src = '/img/defaultUser.png'}  className={styles.userImg} alt="사용자" />
                     <div className={styles.userName}>{review.userName}</div>
                     <div className={styles.date}>{convertDate(review.hobbyReviewWriteDate)}</div>
-                    <div className={styles.reviewPoint}><span className={styles.star}>별점</span>
+                    <div className={styles.reviewPoint}>
                         <Rate averageRating={review.hobbyReviewRate} />
                     </div>
                 </div>
                     
-                    <div className={styles.reviewSummation}>성향: {getTendency(review.hobbyReviewTendency)}</div>
-                    <div className={styles.reviewSummation}>난이도: {getLevel(review.hobbyReviewLevel)}</div>
-                    <div className={styles.reviewSummation}>이용비용: {getBudget(review.hobbyReviewBudget)}</div>
+                    <div className={styles.reviewTagRow}>
+                        <span className={styles.reviewSummation}>성향: {getTendency(review.hobbyReviewTendency)}</span>
+                        <span className={styles.reviewSummation}>난이도: {getLevel(review.hobbyReviewLevel)}</span>
+                        <span className={styles.reviewSummation}>이용비용: {getBudget(review.hobbyReviewBudget)}</span>
+                    </div>
                     <div className={styles.reviewDetail}>{review.hobbyReviewDetail}</div>
                     <div className={styles.reviewImgContainer}>
                     {/* <img src='/img/sampleImg4.png' className={styles.reviewImg} alt="후기" /> */}

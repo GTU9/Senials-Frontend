@@ -28,14 +28,15 @@ function PartyBoard() {
         api.get('/partyboards/search?size=4')
         .then(result => {
             let results = result.data.results;
-
             dispatch(setLastestParties(results.partyBoards));
         })
+        .catch(err => console.error('최신 모임 조회 실패:', err));
 
         axios.get('/categories')
         .then(result => {
             dispatch(setCategories(result.data.results.categories));
         })
+        .catch(err => console.error('카테고리 조회 실패:', err));
 
     }, [dispatch])
 

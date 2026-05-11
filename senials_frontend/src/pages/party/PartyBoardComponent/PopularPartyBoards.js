@@ -19,7 +19,8 @@ function PopularPartyBoards({ printAllBtn = false }) {
         axios.get('/partyboards/popular-parties?size=4')
         .then(result => {
             dispatch(setPopularParties(result.data.results.popularPartyBoards));
-        });
+        })
+        .catch(err => console.error('인기 모임 조회 실패:', err));
 
     }, [dispatch])
 
