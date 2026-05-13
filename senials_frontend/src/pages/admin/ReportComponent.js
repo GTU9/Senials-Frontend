@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 function ReportComponent(){
 
     const navigate = useNavigate();
-    const [api, setApi] = useState();
+    const apiRef = useRef(null);
 
     // 쿼리스트링
     const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +27,7 @@ function ReportComponent(){
 
     useEffect(() => {
         let api = createApiInstance();
-        setApi(createApiInstance);
+        apiRef.current = api;
 
         const token = localStorage.getItem('token');
 
@@ -131,19 +131,33 @@ function ReportComponent(){
 
     const submitReport = () => {
 
+        const reportType = parseInt(reportTypeInput.current.value);
+        if (reportType < 0) {
+            alert('신고 분류를 선택해주세요.');
+            return;
+        }
+
+        const reportDetail = reportDetailInput.current.value.trim();
+        if (!reportDetail) {
+            alert('상세 사유를 입력해주세요.');
+            return;
+        }
+
         let reportData = {
             reportTargetNumber: reportTargetNumber.current
             , reportTargetType: reportTargetType.current
-            , reportType: reportTypeInput.current.value
-            , reportDetail: reportDetailInput.current.value
+            , reportType: reportType
+            , reportDetail: reportDetail
         }
 
-        api.post(`/reports`, reportData)
+        apiRef.current.post(`/reports`, reportData)
         .then(response => {
-            let results = response.data.results;
-
             alert('신고가 완료되었습니다.');
             navigate(-1);
+        })
+        .catch(err => {
+            console.error('신고 실패:', err);
+            alert('신고 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
         })
     }
 

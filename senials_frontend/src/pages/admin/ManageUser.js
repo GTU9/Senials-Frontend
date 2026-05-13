@@ -1,6 +1,6 @@
 import React,{useEffect, useRef, useState} from 'react';
 import styles from './Admin.module.css';
-import {useDispatch,userSelector, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import AdminNav from './AdminNav.js';
 import createApiInstance from '../common/tokenApi.js';
 import { useNavigate } from 'react-router-dom';
@@ -18,11 +18,9 @@ const wrongReqeust = (navigate) => {
 
 function ManageUser(){
 
-    let state=useSelector((state)=>state)
-    let dispatch = useDispatch()
     let navigate = useNavigate();
 
-    const [api, setApi] = useState();
+    const apiRef = useRef(null);
     const [users, setUsers] = useState([]);
     const [checkedUsers, setCheckedUsers] = useState(new Set());
     const [checkedIdx, setCheckedIdx] = useState(new Set());
@@ -31,7 +29,6 @@ function ManageUser(){
 
     useEffect(() => {
 
-        let api;
         const token = localStorage.getItem('token');
         if(token == null) {
             wrongReqeust(navigate);
@@ -41,14 +38,17 @@ function ManageUser(){
             }
         }
 
-        setApi(createApiInstance);
-        api = createApiInstance();
+        const api = createApiInstance();
+        apiRef.current = api;
 
         api.get('/users-manage')
         .then(response => {
             let results = response.data.results;
 
             setUsers(results.users);
+        })
+        .catch(err => {
+            console.error('사용자 목록 조회 실패:', err);
         })
 
     }, [])
@@ -86,7 +86,7 @@ function ManageUser(){
 
         if(confirmChange) {
 
-            api.put('/users', {
+            apiRef.current.put('/users', {
                 checkedUsers: Array.from(checkedUsers)
                 , status: status
             })
@@ -101,11 +101,11 @@ function ManageUser(){
                     return copy;
                 })
     
-                if (state == 0) {
-                    alert('임시 활동정지 해제제완료');
-                } else if (state == 1) {
-                    alert('임시 활동정지 완료')
-                } else if (state == 2) {
+                if (status === 0) {
+                    alert('활동정지 해제 완료');
+                } else if (status === 1) {
+                    alert('임시 활동정지 완료');
+                } else if (status === 2) {
                     alert('활동정지 완료');
                 }
             })
@@ -120,11 +120,14 @@ function ManageUser(){
     const searchUsers = (e) => {
         if(e.key == 'Enter') {
 
-            api.get(`/users-manage?keyword=${e.target.value}`)
+            apiRef.current.get(`/users-manage?keyword=${e.target.value}`)
             .then(response => {
                 let results = response.data.results;
-    
+
                 setUsers(results.users);
+            })
+            .catch(err => {
+                console.error('사용자 검색 실패:', err);
             })
 
         }
