@@ -51,7 +51,7 @@ import SuggestionDetail from './pages/admin/SuggestionDetail.js';
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/senials">
             <ScrollToTop />
             <Routes>
                 <Route path='/' element={<Layout />}>
